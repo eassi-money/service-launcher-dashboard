@@ -1,8 +1,7 @@
 {
-  "name": "launcher_dashboard",
+  "name": "eassi",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://eassi-money.github.io/service-launcher-dashboard/",
   "dependencies": {
     "bignumber.js": "^6.0.0",
     "material-ui": "^0.20.0",
@@ -21,10 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-     "predeploy": "npm run build",
-      "deploy": "gh-pages -d build"
+
   },
-  "devDependencies": {
-    "gh-pages": "^1.1.0"
-  }
+ 
 }
