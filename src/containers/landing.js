@@ -113,6 +113,7 @@ class Landing extends Component {
 
 							{
 								signupData ?
+
 									<div className='col-6 center row'>
 										<h1 className='title'>Thank you for signing up to {signupData.company}</h1>
 										<p className='subtitle'>Check your email for the link to create your password and login</p>
@@ -120,9 +121,10 @@ class Landing extends Component {
 									</div> :
 									<div className='landing-row'>
 										<div className='container'>
+										    <img src='Eassi_logo_smaller.svg' className='landing_logo'/>
 											<h1 className='title'>{this.state.data && this.state.data.display_name}</h1>
 											<p className='subtitle'>{this.state.data && this.state.data.subtitle}</p>
-											<p>Sign up to help shape the future of loyalty and support! </p>
+											<p>Sign up to help shape the future of financial literacy for kids! </p>
 											{
 												signupErr ?
 													<p>Error: {signupErr}</p> : 

@@ -26,7 +26,7 @@ class Nav extends Component {
 		const isAdmin = user_data && user_data.groups.filter(i => i.name === 'admin').length > 0;
 
 		const drawer_contents = [
-			<img style={style.drawer_logo} key={0} alt='logo' className='nav-img' src='./logo.1.png' />,
+			<img style={style.drawer_logo} key={0} alt='logo' className='nav-img' src='./Eassi_logo_smaller.svg' />,
 			<MenuItem
 				key={1}
 				style={style.drawer_link_highlight(path, '/')}
