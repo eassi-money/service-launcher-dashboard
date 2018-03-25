@@ -107,7 +107,9 @@ class Home extends Component {
 											<div style={style.card_right} className='right'>
 												<h3>{ company_data && company_data.card_display_name }</h3>
 												<p className='cardtext'>{ company_data && company_data.description }</p>
-												<a href="https://rehive.com" rel="noopener noreferrer" target="_blank"><RaisedButton label="Visit Site" secondary={true} /></a>
+												<a href="https://exp-shell-app-assets.s3-us-west-1.amazonaws.com/android%2F%40eassi%2Fwallet-52d379e1-2fec-11e8-9673-0a580a782104-signed.apk" rel="noopener noreferrer" target="_blank"><RaisedButton label="Download App" secondary={true} /></a>
+									    		<a href="https://expo.io/@chrisapps/wallet" rel="noopener noreferrer" target="_blank"><RaisedButton label="Expo App" secondary={true} /></a>
+
 											</div>
 										</Paper>
 										<br />
