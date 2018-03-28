@@ -4,7 +4,6 @@ import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
 import Loader from '../components/loader'
-import { BigNumber } from 'bignumber.js'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -22,8 +21,7 @@ class RewardRequests extends Component {
 
 	render() {
 		const { data, err, approveReward, rejectReward } = this.props
-		const user_data = JSON.parse(localStorage.getItem('user'))
-		
+
 		return (
 			<div className='container'>
 				<Dialog
@@ -80,7 +78,8 @@ class RewardRequests extends Component {
 						<br />
 					</div>
 					{
-						data && data.length > 0 ?
+						data && data.filter(i => i.state === 'pending').length > 0 ?
+
 							data.filter(i => i.state === 'pending').map((item, index) => {
 								return (
 									<div key={index} className='col-12'>
