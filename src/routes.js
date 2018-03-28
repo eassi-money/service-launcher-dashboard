@@ -1,171 +1,122 @@
-import React, { Component } from 'react'
-import Paper from 'material-ui/Paper';
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import RaisedButton from 'material-ui/RaisedButton'
-import Loader from '../components/loader'
+import React, {Component} from 'react'
+import {
+	BrowserRouter as Router,
+	Route
+} from 'react-router-dom'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { Provider } from 'react-redux'
 
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { getRewardRequests, approveReward, rejectReward } from '../actions/reward_requests'
+import Nav from './containers/nav'
+import Home from './containers/home'
+import Wallet from './containers/wallet'
+import Market from './containers/market'
+import Earn from './containers/earn'
+import Landing from './containers/landing'
+import SetPassword from './containers/set_password'
+import Settings from './containers/settings'
+import Count from './containers/count'
+import RewardRequests from './containers/reward_requests'
 
-import { style } from '../style/'
+import { callApi } from './utils'
 
-class RewardRequests extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			reward_identifier: false
+import { configureStore } from './store'
+import { purpleA700, blue800, grey600, white } from 'material-ui/styles/colors';
+
+const muiTheme = getMuiTheme({
+	palette: {
+		primary1Color: purpleA700,
+		primary2Color: grey600,
+		primary3Color: blue800,
+		canvasColor: white,
+		accent1Color: purpleA700,
+		accent2Color: grey600,
+		accent3Color: blue800,
+	},
+	appBar: {
+	},
+});
+
+const store = configureStore()
+// Protect routes after login works
+export default class extends Component {
+
+	componentDidMount() {
+		const token = localStorage.getItem('token')
+
+		if (token) {
+			const route = process.env.REACT_APP_REHIVE_API_URL + '/user/'
+			callApi('GET', route, token)
+				.then(json => {
+					if (json.status !== 'success') {
+						this.logoutInvalidToken()
+					}
+				})
+				.catch(err => {
+					this.logoutInvalidToken()
+				})
 		}
 	}
 
-	render() {
-		const { data, err, approveReward, rejectReward } = this.props
-
-		return (
-			<div className='container'>
-				<Dialog
-					contentStyle={{ maxWidth: "360px" }}
-					autoDetectWindowHeight={true}
-					modal={false}
-					open={this.state.reward_identifier ? true : false}
-					onRequestClose={() => this.setState({ reward_identifier: '' })}
-				>
-					<div style={{
-						alignContent: 'center',
-						textAlign: 'center',
-					}}>
-						<h3>Are you sure you want to {
-							this.state.reject ? "reject" : "approve"
-						} this request?</h3>
-						{
-							err ?
-								<h3>{err}</h3> : null
-						}
-						<form onSubmit={(e) => {
-							e.preventDefault()
-							if (this.state.reject) {
-								rejectReward({ identifier: this.state.reward_identifier })
-							} else {
-								approveReward({ identifier: this.state.reward_identifier })
-							}
-						}}>
-							<FlatButton
-								label="Cancel"
-								primary={true}
-								onClick={() => this.setState({ reward_identifier: '', reject: null })}
-							/>
-							<FlatButton
-								label="Yes"
-								primary={true}
-								keyboardFocused={true}
-								type='submit'
-							/>
-						</form>
-					</div>
-				</Dialog>
-				<div className='row'>
-					<div className='col-12'>
-						<Paper style={style.card_header} zDepth={3}>
-							<div style={style.card_left}>
-								<img style={style.card_left_img} src='trading1.svg' alt='earn' />
-							</div>
-							<div style={style.card_right} className='right'>
-								<h3>Reward Requests</h3>
-								<p>Approve reward claim requests</p>
-							</div>
-						</Paper>
-						<br />
-					</div>
-					{
-						data && data.filter(i => i.state === 'pending').length > 0 ?
-							data.filter(i => i.state === 'pending').map((item, index) => {
-								return (
-									<div key={index} className='col-12'>
-										<Paper style={style.card} zDepth={3}>
-											<div style={style.card_left}>
-												<img style={style.card_left_img} alt='logo' src='trading1.svg' />
-											</div>
-											<div style={style.card_right} className='right'>
-												<h3>{item.reward_type}</h3>
-												<p>{item.user}</p>
-												<div>
-													{
-														item.state === 'pending' ?
-															<RaisedButton fullWidth={true} onClick={() => this.setState({ reward_identifier: item.identifier })} className="f-right" primary={true} label="Approve" /> :
-															<RaisedButton className="f-right" disabled={true} label="Approved" />
-													}
-												</div>
-													<br/><br/><br/>
-												<div>
-													{
-														item.state === 'pending' ?
-															<RaisedButton fullWidth={true} onClick={() => this.setState({ reward_identifier: item.identifier, reject: true })} className="f-right" primary={true} label="Reject" /> :
-															null
-													}
-												</div>
-											</div>
-										</Paper>
-										<br />
-									</div>
-								)
-							}) :
-							<div className='col-12'>
-								<Paper style={style.transaction_card} zDepth={3}>
-									<div className='container center'>
-										<br />
-										<h3>No Reward Requests</h3>
-										<br />
-									</div>
-								</Paper>
-								<br />
-							</div>
-					}
-				</div>
-			</div>
-		)
+	logoutInvalidToken = () => {
+		localStorage.removeItem('token')
+		localStorage.removeItem('user')
+		window.location = '/'
 	}
-}
 
-class RewardRequestsContainer extends Component {
-	componentDidMount() {
+render() {
+		const token = localStorage.getItem('token')
+
 		const user_data = JSON.parse(localStorage.getItem('user'))
-		this.props.getRewardRequests(user_data.company)
-	}
+		const isAdmin = user_data && user_data.groups.filter(i => i.name === 'admin').length > 0;
 
-	render() {
-		const { loading, data, err, approveReward, rejectReward } = this.props
+		const nav_routes = ['/', '/wallet', '/earn', '/perks']
+
+		if (isAdmin) {
+			nav_routes.push('/reward_requests')
+			nav_routes.push('/settings')
+		}
+
+
+
 		return (
-			<div>
-				{
-					loading ?
-						<Loader /> :
-						err ?
-						<div className="container center">
-								<h3>An error occurred</h3>
-						</div> :
-							<RewardRequests err={err} data={data} approveReward={approveReward} rejectReward={rejectReward} />
-				}
-			</div>
+			<Provider store={store}>
+				<MuiThemeProvider muiTheme={muiTheme}>
+					<Router>
+						<div>
+							{
+								token ?
+									<div className='main'>
+										{
+											nav_routes.map((route, index) => (
+												<Route key={index} exact path={route} component={Nav} />
+											))
+										}
+										<Route exact path='/' component={Home} />
+										<Route exact path='/wallet' component={Wallet} />
+										<Route exact path='/earn' component={Earn} />
+										<Route exact path='/perks' component={Market} />
+										{
+											isAdmin ?
+												<Route exact path='/reward_requests' component={RewardRequests} /> :
+												null
+										}
+										{
+											isAdmin ?
+												<Route exact path='/settings' component={Settings} /> :
+												null
+										}
+									</div> :
+									<div>
+										<Route exact path='/' component={Landing} />
+										<Route exact path='/setpassword' component={SetPassword} />
+									</div>
+							}
+							<Route exact path='/count' component={Count} />
+						</div>
+					</Router>
+				</MuiThemeProvider>
+			</Provider>
 		)
 	}
 }
-
-function mapStateToProps(state) {
-	const { data, loading, err } = state.reward_requests
-	return {
-		data,
-		loading,
-		err
-	}
-}
-
-function mapDispatchToProps(dispatch) {
-	return {
-		getRewardRequests: bindActionCreators(getRewardRequests, dispatch),
-		approveReward: bindActionCreators(approveReward, dispatch),
-		rejectReward: bindActionCreators(rejectReward, dispatch)
-	}
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(RewardRequestsContainer)
