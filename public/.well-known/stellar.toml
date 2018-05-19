@@ -1,0 +1,8 @@
+[[CURRENCIES]]
+code = "SHAPE"
+conditions = "Shape the future of loyalty and support"
+desc = "Shape supporter token"
+display_decimals = 7
+image = "https://shapelaunch.com/logo.png"
+issuer = "BPRS63VQIKJP5VNNEV3TQEH6FCVMTZ6ZHK4CJFPLKKPXLBVYFZ62HJP"
+name = "Shape"

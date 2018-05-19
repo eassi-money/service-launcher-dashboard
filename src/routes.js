@@ -4,38 +4,78 @@ import {
 	Route
 } from 'react-router-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { Provider } from 'react-redux'
-
+import Loader from './components/loader'
 import Nav from './containers/nav'
 import Home from './containers/home'
-import Wallet from './containers/wallet'
-import Market from './containers/market'
-import Earn from './containers/earn'
+import Wallet from './containers/wallet/'
+import Perks from './containers/perks'
+import Rewards from './containers/rewards'
 import Landing from './containers/landing'
 import SetPassword from './containers/set_password'
-import Settings from './containers/settings'
+import ResetPassword from './containers/reset_password'
 import Count from './containers/count'
 import RewardRequests from './containers/reward_requests'
-
-import { callApi } from './utils'
+import { style } from './style/index'
+import { callApi, makeMuiTheme } from './utils'
 
 import { configureStore } from './store'
-import { purpleA700, blue800, grey600, white } from 'material-ui/styles/colors';
+import { 
+	purpleA700, purple50, grey600, white,
+} from 'material-ui/styles/colors';
 
-const muiTheme = getMuiTheme({
-	palette: {
-		primary1Color: purpleA700,
-		primary2Color: grey600,
-		primary3Color: blue800,
-		canvasColor: white,
-		accent1Color: purpleA700,
-		accent2Color: grey600,
-		accent3Color: blue800,
-	},
-	appBar: {
-	},
-});
+const themes = {
+	'1': makeMuiTheme('#61338C', '#F1C246', '#D9DAE2', '#ffffff'),
+	'2': makeMuiTheme(purpleA700, grey600, purple50, white),
+	'3': makeMuiTheme('#ff9900','#d4c068','#bed39b','#ffcc5c'),
+	'4': makeMuiTheme('#99ccff','#ccccff','#b3ccff','#e6ccff'),
+	'5': makeMuiTheme('#008ce6','#00b3cc','#00d9b3','#00ff99'),
+	'6': makeMuiTheme('#d93366','#66ccff','#b36699','#8c99cc')
+}
+
+let initial_theme = '1';
+let initial_bg = '1'//localStorage.getItem('bg') === '1' || localStorage.getItem('bg') === undefined ? 1 : 2;
+
+let muiTheme = themes[initial_theme];
+let bgImage = "url('/1/bg1.svg')";
+
+switch (localStorage.getItem('theme')) {
+	case null:
+	case undefined:
+		localStorage.setItem('theme', initial_theme);
+		break;
+	case '1':
+		muiTheme = themes['1'];
+		bgImage = "url('/1/bg" + initial_bg + ".svg')";
+		break;
+
+	case '2':
+		muiTheme = themes['2'];
+		bgImage = "url('/2/bg" + initial_bg + ".svg')";
+		break;
+
+	case '3':
+		muiTheme = themes['3'];
+		bgImage = "url('/3/bg" + initial_bg + ".svg')";
+		break;
+
+	case '4':
+		muiTheme = themes['4'];
+		bgImage = "url('/4/bg" + initial_bg + ".svg')";
+		break;
+
+	case '5':
+		muiTheme = themes['5'];
+		bgImage = "url('/5/bg" + initial_bg + ".svg')";
+		break;
+
+	case '6':
+		muiTheme = themes['6'];
+		bgImage = "url('/6/bg" + initial_bg + ".svg')";
+		break;
+	default:
+		break;
+}
 
 const store = configureStore()
 // Protect routes after login works
@@ -70,52 +110,55 @@ render() {
 		const user_data = JSON.parse(localStorage.getItem('user'))
 		const isAdmin = user_data && user_data.groups.filter(i => i.name === 'admin').length > 0;
 
-		const nav_routes = ['/', '/wallet', '/earn', '/perks']
+		const nav_routes = ['/', '/wallet', '/rewards', '/perks']
 
 		if (isAdmin) {
 			nav_routes.push('/reward_requests')
-			nav_routes.push('/settings')
 		}
 
 
 
 		return (
 			<Provider store={store}>
-				<MuiThemeProvider muiTheme={muiTheme}>
+				{
+					muiTheme && typeof muiTheme === 'object' ?
+					<MuiThemeProvider muiTheme={muiTheme}>
 					<Router>
-						<div>
-							{
-								token ?
-									<div className='main'>
-										{
-											nav_routes.map((route, index) => (
-												<Route key={index} exact path={route} component={Nav} />
-											))
-										}
-										<Route exact path='/' component={Home} />
-										<Route exact path='/wallet' component={Wallet} />
-										<Route exact path='/earn' component={Earn} />
-										<Route exact path='/perks' component={Market} />
-										{
-											isAdmin ?
-												<Route exact path='/reward_requests' component={RewardRequests} /> :
-												null
-										}
-										{
-											isAdmin ?
-												<Route exact path='/settings' component={Settings} /> :
-												null
-										}
-									</div> :
-									<div>
-										<Route exact path='/' component={Landing} />
-										<Route exact path='/setpassword' component={SetPassword} />
-									</div>
-							}
-							<Route exact path='/count' component={Count} />
+						<div style={style.bodyBg(bgImage)}>
+							<div className='main-land'>
+								{
+									token ?
+										<div className='main'>
+											{
+												nav_routes.map((route, index) => (
+													<Route key={index} exact path={route} component={Nav} />
+												))
+											}
+											<Route exact path='/' component={Home} />
+											<Route exact path='/wallet' component={Wallet} />
+											<Route exact path='/rewards' component={Rewards} />
+											<Route exact path='/perks' component={Perks} />
+											{
+												isAdmin ?
+													<Route exact path='/reward_requests' component={RewardRequests} /> :
+													null
+											}
+										</div> :
+										<div>
+											<Route exact path='/' component={Landing} />
+											<Route exact path='/setpassword' component={SetPassword} />
+										</div>
+								}
+								<div>
+									<Route exact path='/resetpassword' component={ResetPassword} />
+									<Route exact path='/count' component={Count} />
+								</div>
+							</div>
 						</div>
 					</Router>
-				</MuiThemeProvider>
+				</MuiThemeProvider> :
+				<Loader/>
+				}
 			</Provider>
 		)
 	}

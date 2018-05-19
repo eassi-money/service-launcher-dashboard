@@ -1,3 +1,5 @@
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
 export const callApi = (method, route, token, data) => {
 
 	let headers = {
@@ -34,3 +36,19 @@ export const callApi = (method, route, token, data) => {
 		.catch(err => err)
 	)
 }
+
+export const makeMuiTheme = (color1, color2, color3, canvasColor) => (
+	getMuiTheme({
+		palette: {
+			primary1Color: color1,
+			primary2Color: color2,
+			primary3Color: color3,
+			canvasColor,
+			accent1Color: color1,
+			accent2Color: color2,
+			accent3Color: color3,
+		},
+		appBar: {
+		},
+	})
+)

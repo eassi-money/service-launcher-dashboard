@@ -1,10 +1,5 @@
-body {
-	background: url("../img/bg-02.svg");
-	background-size: cover;
-	background-position: center center;
-	background-repeat:  no-repeat;
-	background-attachment: fixed;
-	background-size:  cover;
+.main-land {
+	min-height: 100vh;
 }
 
 .landing-row {
@@ -36,12 +31,6 @@ body {
 .header-img {
 	height: 40px;
 	margin-top: 2vh;
-}
-
-.nav-img {
-	height: 60px;
-	margin-top: 1.5vh;
-    margin-bottom: 2.5vh;
 }
 
 .center {
@@ -84,7 +73,7 @@ body {
 }
 
 .card-heading {
-	margin-top: 0px;
+	margin-top: 5px;
 }
 
 

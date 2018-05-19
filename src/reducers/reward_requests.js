@@ -36,9 +36,9 @@ export default (state = { loading: false }, action) => {
 			})
 		case APPROVE_REWARD_SUCCESS:
 		case REJECT_REWARD_SUCCESS:
-			window.location.reload()
 			return merge({}, state, {
-				loading: false
+				loading: false,
+				reward_success: true
 			})
 		default:
 			return state

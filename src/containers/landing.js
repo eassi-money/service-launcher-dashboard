@@ -3,13 +3,14 @@ import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-import Dialog from 'material-ui/Dialog';
-
+import ShapeDialog from '../components/dialog';
+import { style } from '../style'
 import Loader, { SmallLoader } from '../components/loader'
 
 import { signup, login } from '../actions/auth'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { Link } from 'react-router-dom'
 
 
 class Landing extends Component {
@@ -56,54 +57,57 @@ class Landing extends Component {
 					iconElementRight={<FlatButton onClick={this.handleOpen} label="Login" />}
 				/>
 
-				<Dialog
-					contentStyle={{ maxWidth: "360px" }}
-					autoDetectWindowHeight={true}
-					modal={false}
-					open={this.state.open}
-					onRequestClose={this.handleClose}
-				>
-					{
-						loginLoading ?
-							<SmallLoader /> :
-							<form style={{
-								alignContent: 'center',
-								textAlign: 'center',
-							}} onSubmit={(e) => {
-								e.preventDefault()
-								login(this.state.email, this.state.password)
-							}}>
-								<h3>Login</h3>
-								{
-									loginErr ?
-										<p>Error: {loginErr}</p> : null
-								}
-								<TextField
-									value={this.state.email}
-									onChange={e => this.setState({ email: e.target.value })}
-									hintText="Email"
-									type='email'
-								/><br />
-								<TextField
-									value={this.state.password}
-									onChange={e => this.setState({ password: e.target.value })}
-									hintText="Password"
-									type='password'
-								/><br />
-								<FlatButton
-									label="Cancel"
-									primary={true}
-									onClick={this.handleClose}
-								/>
-								<FlatButton
-									label="Login"
-									primary={true}
-									keyboardFocused={true}
-									type='submit'
-								/>
-							</form>
+				<ShapeDialog
+					
+					is_open={this.state.open}
+					close={this.handleClose}
+					modal_content={
+						<div>
+							{
+								loginLoading ?
+									<SmallLoader /> :
+									<form style={style.modal_content} onSubmit={(e) => {
+										e.preventDefault()
+										login(this.state.email, this.state.password)
+									}}>
+										<h3>Login</h3>
+										{
+											loginErr ?
+												<p>Error: {loginErr}</p> : null
+										}
+										<TextField
+											value={this.state.email}
+											onChange={e => this.setState({ email: e.target.value })}
+											hintText="Email"
+											type='email'
+										/><br />
+										<TextField
+											value={this.state.password}
+											onChange={e => this.setState({ password: e.target.value })}
+											hintText="Password"
+											type='password'
+										/><br />
+										<FlatButton
+											label="Cancel"
+											primary={true}
+											onClick={this.handleClose}
+										/>
+										<FlatButton
+											label="Login"
+											primary={true}
+											keyboardFocused={true}
+											type='submit'
+										/>
+										<div className='row'>
+											<br/>
+											<Link to='/resetpassword'>Reset Password</Link>
+											<br/><br/>
+										</div>
+									</form>
+							}
+						</div>
 					}
-				</Dialog>
+				/>
 
 				<div className='spacer'></div>
 				{
@@ -113,7 +117,6 @@ class Landing extends Component {
 
 							{
 								signupData ?
-
 									<div className='col-6 center row'>
 										<h1 className='title'>Thank you for signing up to {signupData.company}</h1>
 										<p className='subtitle'>Check your email for the link to create your password and login</p>
@@ -121,31 +124,18 @@ class Landing extends Component {
 									</div> :
 									<div className='landing-row'>
 										<div className='container'>
-										    <img src='Eassi_logo_smaller.svg' className='landing_logo'/>
 											<h1 className='title'>{this.state.data && this.state.data.display_name}</h1>
 											<p className='subtitle'>{this.state.data && this.state.data.subtitle}</p>
-											<p>Sign up to help shape the future of financial literacy for kids! </p>
 											{
 												signupErr ?
 													<p>Error: {signupErr}</p> : 
-													notAllowedEmail ? <span style={{color: 'red'}}>Email with '+' not allowed</span> : null
+													notAllowedEmail ? <span style={style.error_color}>Email with '+' not allowed</span> : null
 											}
 											<form onSubmit={(e) => {
 												e.preventDefault()
 												signup(this.state.email)
 											}}>
-												<TextField
-													inputStyle={{ color: "black" }}
-													hintStyle={{ color: "#999" }}
-													value={this.state.email}
-													onChange={e => this.setState({ email: e.target.value })}
-													hintText="Email"
-												/>
-												{
-													signupLoading ?
-														<SmallLoader /> :
-														<RaisedButton disabled={notAllowedEmail} style={{ marginLeft: '8px' }} type='submit' label="Join" secondary={true} />
-												}
+												
 											</form>
 											<br /><br />
 										</div>

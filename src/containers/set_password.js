@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-
+import { style } from '../style'
 import { SmallLoader } from '../components/loader'
 
 import { setPassword } from '../actions/auth'
@@ -26,7 +26,7 @@ class Landing extends Component {
 				<AppBar title="Launcher" showMenuIconButton={false} />
 
 				<div className='spacer'></div>
-				<div style={{ color: 'white' }} className='row'>
+				<div style={style.white} className='row'>
 					<div className='col-12 center landing-row'>
 						<h1 className='title'>Set Password</h1>
 						<p className='subtitle'>Set your password to continue</p>
@@ -49,14 +49,14 @@ class Landing extends Component {
 							setPassword(password, passwordConf, uid, paramtoken, email)
 						}}>
 							<TextField
-								hintStyle={{ color: "#999" }}
+								hintStyle={style.hint_black}
 								value={this.state.password}
 								type="password"
 								onChange={e => this.setState({ password: e.target.value })}
 								hintText="Password"
 							/><br />
 							<TextField
-								hintStyle={{ color: "#999" }}
+								hintStyle={style.hint_black}
 								value={this.state.passwordConf}
 								type="password"
 								onChange={e => this.setState({ passwordConf: e.target.value })}
